@@ -1,32 +1,53 @@
 plugins {
-	id 'java'
+    id 'java'
+    id 'idea'
+    id 'checkstyle'
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 repositories {
-	mavenLocal()
-	maven {
-		url = 'https://repo.runelite.net'
-	}
-	mavenCentral()
+    mavenLocal()
+    maven {
+        url = 'https://repo.runelite.net'
+    }
+    mavenCentral()
 }
 
 def runeLiteVersion = 'latest.release'
 
 dependencies {
-	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
+    compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
 
-	compileOnly 'org.projectlombok:lombok:1.18.20'
-	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    implementation group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.1.0', {
+        exclude group: 'com.google.inject'
+    }
 
-	testImplementation 'junit:junit:4.12'
-	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
-	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+    testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
 }
 
-group = 'com.example'
-version = '1.0-SNAPSHOT'
+group = 'ca.plugins.toaextended'
+version = '1.0'
 
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
-	options.release.set(11)
+    options.encoding = 'UTF-8'
+    options.release.set(11)
+}
+
+tasks {
+    shadowJar {
+        archiveFileName.set("${project.name}-${project.version}.jar")
+    }
 }
